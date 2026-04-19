@@ -1,0 +1,6 @@
+@CorePlay_HostAddress = http://localhost:5236
+
+GET {{CorePlay_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
