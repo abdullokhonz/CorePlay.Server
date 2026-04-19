@@ -64,18 +64,26 @@ public class UserService : IUser
     public async Task<UserDtos?> UpdateAsync(UserUpdateDto User)
     {
         var entity = await _db.Users.FirstOrDefaultAsync(x => x.UserId == User.UserId);
-        
+
         if (entity == null)
             return null;
-        
+
         entity.Email = User.Email;
         entity.UserName = User.UserName;
-        entity.PasswordHash = User.PasswordHash;
         
-        _db.Users.Update(entity);
+        if (!string.IsNullOrWhiteSpace(User.PasswordHash))
+        {
+            entity.PasswordHash = _passwordHasher.HashPassword(entity, User.PasswordHash);
+        }
+
         await _db.SaveChangesAsync();
 
-        return new UserDtos { Email = User.Email, UserName = User.UserName, UserId = User.UserId };
+        return new UserDtos
+        {
+            UserId = entity.UserId,
+            UserName = entity.UserName,
+            Email = entity.Email
+        };
     }
 
     public async Task<UserDtos?> DeleteAsync(int id)
