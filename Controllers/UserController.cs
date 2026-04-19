@@ -31,6 +31,16 @@ public class UserController : ControllerBase
         return Ok(res);
     }
 
+    [HttpPut]
+    public async Task<IActionResult> Put([FromBody] UserUpdateDto user)
+    {
+        var  res = await _user.UpdateAsync(user);
+        
+        if (res == null) return BadRequest("Error updating User");
+        
+        return Ok(res);
+    }
+    
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

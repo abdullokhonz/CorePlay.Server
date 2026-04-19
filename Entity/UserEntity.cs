@@ -21,7 +21,5 @@ public class UserEntity
     [Key]
     public int UserId { get; set; }
     
-    [Required]
-    public Roles Role { get; set; }
     
 }

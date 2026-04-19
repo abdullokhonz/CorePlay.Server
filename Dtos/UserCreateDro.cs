@@ -17,9 +17,4 @@ public class UserCreateDro
     [PasswordPropertyText]
     public string PasswordHash { get; set; }
     
-    [Key]
-    public int UserId { get; set; }
-    
-    [Required]
-    public Roles Role { get; set; }
 }

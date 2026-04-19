@@ -28,9 +28,6 @@ public class UserService : IUser
         if (!string.IsNullOrWhiteSpace(user.Email))
             userquary = userquary.Where(x => x.Email == user.Email);
 
-        if (user.Role != 0)
-            userquary = userquary.Where(x => x.Role == user.Role);
-
         if (!string.IsNullOrWhiteSpace(user.UserName))
             userquary = userquary.Where(x => x.UserName == user.UserName);
         
@@ -41,7 +38,6 @@ public class UserService : IUser
             {
                 UserName = x.UserName,
                 Email = x.Email,
-                Role = x.Role,
             }).ToListAsync();
     }
 
@@ -55,8 +51,6 @@ public class UserService : IUser
         {
             UserName = User.UserName,
             Email = User.Email,
-            Role = User.Role,
-            UserId = User.UserId
         };
         
         newuser.PasswordHash = _passwordHasher.HashPassword(newuser, User.PasswordHash);
@@ -64,15 +58,24 @@ public class UserService : IUser
         _db.Users.Add(newuser);
         await _db.SaveChangesAsync();
         
-        return new UserDtos{UserId = newuser.UserId, UserName = newuser.UserName, Email = newuser.Email, Role = newuser.Role};
+        return new UserDtos{UserId = newuser.UserId, UserName = newuser.UserName, Email = newuser.Email};
     }
 
     public async Task<UserDtos?> UpdateAsync(UserUpdateDto User)
     {
-        var entity = await _db.Users.FirstOrDefaultAsync(x => x.UserId == User.);
-
+        var entity = await _db.Users.FirstOrDefaultAsync(x => x.UserId == User.UserId);
+        
         if (entity == null)
             return null;
+        
+        entity.Email = User.Email;
+        entity.UserName = User.UserName;
+        entity.PasswordHash = User.PasswordHash;
+        
+        _db.Users.Update(entity);
+        await _db.SaveChangesAsync();
+
+        return new UserDtos { Email = User.Email, UserName = User.UserName, UserId = User.UserId };
     }
 
     public async Task<UserDtos?> DeleteAsync(int id)
@@ -84,6 +87,6 @@ public class UserService : IUser
         _db.Users.Remove(res);
         await _db.SaveChangesAsync();
         
-        return new UserDtos{UserId = id, UserName = res.UserName, Email = res.Email, Role = res.Role};
+        return new UserDtos{UserId = id, UserName = res.UserName, Email = res.Email};
     }
 }

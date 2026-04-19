@@ -16,4 +16,8 @@ public class UserUpdateDto
     [Required]
     [PasswordPropertyText]
     public string PasswordHash { get; set; }
+    
+    [Required]
+    [Key]
+    public int UserId { get; set; }
 }

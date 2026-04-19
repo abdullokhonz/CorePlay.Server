@@ -11,5 +11,4 @@ public class UserDtos
 
     public int UserId { get; set; }
     
-    public Roles Role { get; set; }
 }
