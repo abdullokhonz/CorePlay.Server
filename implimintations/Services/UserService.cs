@@ -61,19 +61,19 @@ public class UserService : IUser
         return new UserDtos{UserId = newuser.UserId, UserName = newuser.UserName, Email = newuser.Email};
     }
 
-    public async Task<UserDtos?> UpdateAsync(UserUpdateDto User)
+    public async Task<UserDtos?> UpdateAsync(UserUpdateDto user)
     {
-        var entity = await _db.Users.FirstOrDefaultAsync(x => x.UserId == User.UserId);
+        var entity = await _db.Users.SingleOrDefaultAsync(x => x.UserId == user.UserId);
 
         if (entity == null)
             return null;
 
-        entity.Email = User.Email;
-        entity.UserName = User.UserName;
-        
-        if (!string.IsNullOrWhiteSpace(User.PasswordHash))
+        entity.Email = user.Email;
+        entity.UserName = user.UserName;
+
+        if (!string.IsNullOrWhiteSpace(user.PasswordHash))
         {
-            entity.PasswordHash = _passwordHasher.HashPassword(entity, User.PasswordHash);
+            entity.PasswordHash = _passwordHasher.HashPassword(entity, user.PasswordHash);
         }
 
         await _db.SaveChangesAsync();
